@@ -1,0 +1,9 @@
+langchain  
+langchain-community
+langchainhub
+google-generativeai 
+langchain_google_genai
+sentence-transformers
+python-dotenv
+streamlit
+pypdf2
