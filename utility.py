@@ -13,6 +13,7 @@ def verify_question(question:str):
         return False
     return True
 
+
 # save uploaded file
 def save_uploaded_file(uploaded_files):
     target_folder = "uploaded_files"
@@ -26,3 +27,20 @@ def save_uploaded_file(uploaded_files):
             file.write(uploaded_file.getbuffer())
         saved_file_paths.append(file_path)
     return saved_file_paths
+
+
+def get_all_files(directory):
+  files = []
+  for file in os.listdir(directory):
+    if os.path.isfile(os.path.join(directory, file)):
+      files.append(file)
+  return files
+
+def get_files_name(files):
+    names = []
+    for file in files:
+        names.append(file.split(".")[0])
+    return names
+
+# files = os.listdir('./faiss_index')
+# print(get_files_name(files))

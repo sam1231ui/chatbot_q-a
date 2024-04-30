@@ -33,8 +33,8 @@ prompt = PromptTemplate(template = prompt_template, input_variables = ["context"
 chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
 
 # answer with vectordb
-def get_response(question):
-    docs = vectordb.get_query_data(question)
+def get_response(question, index):
+    docs = vectordb.get_query_data(question, index)
     # demo = ChatMessageHistory()
     # demo.add_user_message(question)
 

@@ -33,15 +33,22 @@ def get_text_chunks(text):
     return chunks
 
 #Storing the text chunk
-def get_vector_store(text_chunks):
+def get_vector_store(text_chunks, file_name):
+    name = file_name.split(".")[0]
     vector_store = FAISS.from_texts(text_chunks, embedding=embedding_for_vector_db)
-    vector_store.save_local(vector_db_path)
+    vector_store.save_local(vector_db_path, index_name=name)
 
-def get_query_data(question):
-    db = FAISS.load_local(folder_path=vector_db_path, embeddings=embedding_for_vector_db, allow_dangerous_deserialization=True)
+# similar search in faiss
+def get_query_data(question, index):
+    db = FAISS.load_local(folder_path=vector_db_path, embeddings=embedding_for_vector_db, allow_dangerous_deserialization=True, index_name=index)
     retriever = db.as_retriever(k=4)
     docs_data = retriever.invoke(question)
     return docs_data
 
+# add data to exisiting faiss
+def appent_to_index(text_chunks):
+    db = FAISS.load_local(folder_path=vector_db_path, embeddings=embedding_for_vector_db, allow_dangerous_deserialization=True)
+    db.add_texts(texts=text_chunks)
+    db.save_local(vector_db_path)
 
 # print(get_query_data("What did the president say about Ketanji Brown Jackson"))

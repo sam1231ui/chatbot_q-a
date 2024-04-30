@@ -1,31 +1,30 @@
 import streamlit as st
 from chat_bot import get_response, get_chat_answer
 import utility
-import vectordb
+import vectordb, os
 
 # CHAT BOT SECTION
 st.title("Chat bot app")
 st.header("Write your Question")
 question = st.text_input("start the chat !")
 
+    
+# Sidebar - Index File Selection
+st.sidebar.header("Select a vector file File")
+folder_path = "./faiss_index"
+files = os.listdir(folder_path)
+files_names = utility.get_files_name(files)
+selected_file = st.sidebar.selectbox("Select a file", files_names)
 
-# with st.sidebar:
-#         st.title("Menu:")
-#         pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
-#         if st.button("Submit & Process"):
-#             with st.spinner("Processing..."):
-#                 raw_text = utility.get_pdf_text(pdf_docs)
-#                 vectordb.create_vectordb(raw_text)
-#                 st.success("Done")
 
 # verification of question 
 if utility.verify_question(question):
-    answer = get_response(question)["output_text"]
+    answer = get_response(question, selected_file)["output_text"]
     # answer = get_chat_answer(question)
     st.header("Answer")
     st.write(answer)
     st.header("Doc Query Data")
-    doc_data = vectordb.get_query_data(question)
+    doc_data = vectordb.get_query_data(question, selected_file)
     st.write(doc_data)
 else:
     st.warning("must be 2 to 100 chareacters !!")
@@ -46,9 +45,25 @@ with st.sidebar:
                 st.success(f"Files saved successfully at: {', '.join(saved_file_paths)}")
             
         # Vectordb creating 
-        if st.button("Submit & Process"):
+        if st.button("Make faiss index"):
             with st.spinner("Processing..."):
                 raw_text = vectordb.get_pdf_text(pdf_docs)
                 text_chunks = vectordb.get_text_chunks(raw_text)
-                vectordb.get_vector_store(text_chunks)
+                vectordb.get_vector_store(text_chunks, pdf_docs[0].name)
                 st.success("Done")
+
+        # Vectordb creating 
+        if st.button("Add data to exisiting index"):
+            with st.spinner("Processing..."):
+                raw_text = vectordb.get_pdf_text(pdf_docs)
+                text_chunks = vectordb.get_text_chunks(raw_text)
+                vectordb.appent_to_index(text_chunks)
+                st.success("Done")
+
+        
+
+
+# files = utility.get_all_files("faiss_index/")
+
+# for file in files:
+#   st.write(file)
