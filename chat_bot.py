@@ -44,7 +44,7 @@ def get_response(question, index):
     #                 "context": docs,
     #             }
     #         )
-    answer = chain({
+    answer = chain.invoke({
         "input_documents": docs,
         "question":question
         },return_only_outputs=True

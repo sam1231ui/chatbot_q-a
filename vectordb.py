@@ -2,6 +2,8 @@ from langchain_community.vectorstores.faiss import FAISS
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from PyPDF2 import PdfReader
+import csv
+from langchain_community.document_loaders.csv_loader import CSVLoader
 
 
 embedding_for_vector_db = SentenceTransformerEmbeddings(model_name="all-miniLM-L6-v2")
@@ -24,6 +26,7 @@ def get_pdf_text(pdf_docs):
         for page in pdf_reader.pages:
             text += page.extract_text()
     return text
+
 
 
 #creating text chunks
@@ -52,3 +55,7 @@ def appent_to_index(text_chunks):
     db.save_local(vector_db_path)
 
 # print(get_query_data("What did the president say about Ketanji Brown Jackson"))
+# loader = CSVLoader("/home/samruddhak/Downloads/archive (2)/shakespeare_plays.csv")
+# data = loader.load()
+
+# # print(get_csv_text(data))
