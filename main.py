@@ -35,35 +35,47 @@ else:
 # file uploading section
 with st.sidebar:
         st.title("Menu:")
-        pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
-
-       
+        pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=False)
+        
         # Saving the uploaded file:
         if pdf_docs is not None:
             save_button = st.button("Save Files")
             if save_button:
                 target_folder = "uploaded_files"
-                saved_file_paths = utility.save_uploaded_file(pdf_docs)
-                st.success(f"Files saved successfully at: {', '.join(saved_file_paths)}")
+
+                if pdf_docs.name.split(".")[1] not in ["csv", "pdf"]:
+                    st.warning("Please upload only pdf or csv files") 
+                else :
+                    utility.save_uploaded_file(pdf_docs) 
+                    st.success("Files saved successfully")
             
         # Vectordb creating 
-        if st.button("Make new vector db"):
-            with st.spinner("Processing..."):
-                raw_text = vectordb.get_pdf_text(pdf_docs)
-                text_chunks = vectordb.get_text_chunks(raw_text)
-                vectordb.get_vector_store(text_chunks, pdf_docs[0].name)
-                st.success("Done")
+        if st.button("create new Faiss db"):
+            extension = pdf_docs.name.split(".")[1]
+
+            if extension == "pdf":
+                with st.spinner("Processing..."):
+                    raw_text = vectordb.get_pdf_text(pdf_docs)
+                    text_chunks = vectordb.get_text_chunks(raw_text)
+                    vectordb.get_vector_store(text_chunks, pdf_docs.name)
+                    st.success("Done")
+
+            elif extension == "csv":
+                with st.spinner("Processing..."):
+                    # raw_text = vectordb.get_csv_text()
+                    text_chunks = vectordb.get_text_chunks(pd.read_csv(pdf_docs).to_string())
+                    vectordb.get_vector_store(text_chunks, pdf_docs.name)
+                    st.success("Done")
+                    # vectordb.appent_to_index(text_chunks)
+            else :
+                st.warning("please upload csv or pdf")
+        
 
          # Vectordb creating for csv
-        if st.button("Make new vector db of csv"):
-            with st.spinner("Processing..."):
-                # raw_text = vectordb.get_csv_text()
-                text_chunks = vectordb.get_text_chunks(pd.read_csv(pdf_docs[0]).to_string())
-                vectordb.get_vector_store(text_chunks, pdf_docs[0].name)
-                st.success("Done")
-
+        # if st.button("Make new vector db of csv"):
+            
         # Vectordb creating 
-        if st.button("Add data to exisiting vector db"):
+        if st.button("Add data to exisiting Faiss db"):
             with st.spinner("Processing..."):
                 raw_text = vectordb.get_pdf_text(pdf_docs)
                 text_chunks = vectordb.get_text_chunks(raw_text)

@@ -2,8 +2,6 @@ from langchain_community.vectorstores.faiss import FAISS
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from PyPDF2 import PdfReader
-import csv
-from langchain_community.document_loaders.csv_loader import CSVLoader
 
 
 embedding_for_vector_db = SentenceTransformerEmbeddings(model_name="all-miniLM-L6-v2")
@@ -44,7 +42,8 @@ def get_vector_store(text_chunks, file_name):
 # similar search in faiss
 def get_query_data(question, index):
     db = FAISS.load_local(folder_path=vector_db_path, embeddings=embedding_for_vector_db, allow_dangerous_deserialization=True, index_name=index)
-    retriever = db.as_retriever(k=4)
+    retriever = db.as_retriever(search_kwargs=({'k':2}))
+    # print(retriever.search_kwargs)
     docs_data = retriever.invoke(question)
     return docs_data
 
