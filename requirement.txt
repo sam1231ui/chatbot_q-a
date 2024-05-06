@@ -1,5 +1,6 @@
 python-jose
 langchain
+langchain-community 
 transformers
 opencv-python
 tensorflow
