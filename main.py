@@ -1,17 +1,21 @@
 import streamlit as st
 from chat_bot import get_response, get_chat_answer
 import utility
-import vectordb, os
+import vectordb, os, index_utility
 import pandas as pd
+
 
 # CHAT BOT SECTION
 st.title("Q&A chatbot !!")
 st.header("Write your Question")
+
 question = st.text_input("start the chat !")
+if not question:
+    st.text("This is document based Q&A chatbot\n step 1- Load document\n step 2- Make vector db or add to exsisting db\n step 3- select vector db to use\n step 4- Ask questions !! \n note -response also returns FAISS searched documents for better undersanding")
 
     
 # Sidebar - Index File Selection
-st.sidebar.header("Select a vector db to search from")
+st.sidebar.title("FAISS Vector database:")
 folder_path = "./faiss_index"
 files = os.listdir(folder_path)
 files_names = utility.get_files_name(files)
@@ -27,12 +31,12 @@ if utility.verify_question(question):
     st.header("Doc Query Data")
     doc_data = vectordb.get_query_data(question, selected_file)
     st.write(doc_data)
-else:
-    st.warning("must be 2 to 100 chareacters !!")
+# else:
+#     st.warning("must be 2 to 100 chareacters !!")
 
 
 
-# file uploading section
+# sidebar features section 
 with st.sidebar:
         st.title("Menu:")
         pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=False)
@@ -71,10 +75,7 @@ with st.sidebar:
                 st.warning("please upload csv or pdf")
         
 
-         # Vectordb creating for csv
-        # if st.button("Make new vector db of csv"):
-            
-        # Vectordb creating 
+        # Adding the data to exsisting vector db
         if st.button("Add data to exisiting Faiss db"):
             with st.spinner("Processing..."):
                 raw_text = vectordb.get_pdf_text(pdf_docs)
@@ -82,10 +83,15 @@ with st.sidebar:
                 vectordb.appent_to_index(text_chunks)
                 st.success("Done")
 
-        
+        # Merge feature of index section
+        st.header("Merge index:")
+        index_selected = st.sidebar.selectbox("index to merge", set(files_names))
+        target_index = st.sidebar.selectbox("target index", set(files_names))
 
-
-# files = utility.get_all_files("faiss_index/")
-
-# for file in files:
-#   st.write(file)
+        if index_selected == target_index:
+            st.warning("please select different names from the list")
+        else :
+            if st.button("Merge"):
+                with st.spinner("Processing..."):
+                    index_utility.merge_index(index_selected=index_selected, target=target_index)
+                    st.success("Done")
