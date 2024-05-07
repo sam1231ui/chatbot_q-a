@@ -40,7 +40,8 @@ if utility.verify_question(question):
 with st.sidebar:
         st.title("Menu:")
         pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
-        
+        extension = pdf_docs[0].name.split(".")[1] if pdf_docs else ""
+               
         # Saving the uploaded file:
         # if pdf_docs is not None:
         #     save_button = st.button("Save Files")
@@ -54,8 +55,7 @@ with st.sidebar:
         #             st.success("Files saved successfully")
             
         # Vectordb creating 
-        if st.button("submit & process") and pdf_docs:
-            extension = pdf_docs[0].name.split(".")[1]
+        if st.button("submit & process") :
 
             if extension == "pdf":
                 with st.spinner("Processing..."):
@@ -63,7 +63,7 @@ with st.sidebar:
                     text_chunks = vectordb.get_text_chunks(raw_text)
                     vectordb.get_vector_store(text_chunks, pdf_docs[0].name)
                     st.success("Done")
-                    st.experimental_rerun()
+                    st.rerun()
 
             elif extension == "csv":
                 with st.spinner("Processing..."):
@@ -72,11 +72,9 @@ with st.sidebar:
                     vectordb.get_vector_store(text_chunks, pdf_docs[0].name)
                     st.success("Done")
                     # vectordb.appent_to_index(text_chunks)
-                    st.experimental_rerun()
+                    st.rerun()
             else :
                 st.warning("please upload csv or pdf")
-        else:
-            st.warning("please upload file")
 
         # Adding the data to exsisting vector db
         # if st.button("Add data to exisiting Faiss db"):
