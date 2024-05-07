@@ -11,7 +11,7 @@ st.header("Write your Question")
 
 question = st.text_input("start the chat !")
 if not question:
-    st.text("step 1- Load document and press submit\nstep 2- select vector db to use\nstep 3- Ask questions !! \n")
+    st.text("step 1- Load document and press submit\nstep 2- select your uploaded document to use\nstep 3- Ask questions !! \n")
 
     
 # Sidebar - Index File Selection
