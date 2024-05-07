@@ -63,6 +63,7 @@ with st.sidebar:
                     text_chunks = vectordb.get_text_chunks(raw_text)
                     vectordb.get_vector_store(text_chunks, pdf_docs[0].name)
                     st.success("Done")
+                    st.experimental_rerun()
 
             elif extension == "csv":
                 with st.spinner("Processing..."):
@@ -71,6 +72,7 @@ with st.sidebar:
                     vectordb.get_vector_store(text_chunks, pdf_docs[0].name)
                     st.success("Done")
                     # vectordb.appent_to_index(text_chunks)
+                    st.experimental_rerun()
             else :
                 st.warning("please upload csv or pdf")
         
