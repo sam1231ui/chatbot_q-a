@@ -54,7 +54,7 @@ with st.sidebar:
         #             st.success("Files saved successfully")
             
         # Vectordb creating 
-        if st.button("submit & process"):
+        if st.button("submit & process") and pdf_docs:
             extension = pdf_docs[0].name.split(".")[1]
 
             if extension == "pdf":
@@ -75,7 +75,8 @@ with st.sidebar:
                     st.experimental_rerun()
             else :
                 st.warning("please upload csv or pdf")
-        
+        else:
+            st.warning("please upload file")
 
         # Adding the data to exsisting vector db
         # if st.button("Add data to exisiting Faiss db"):
